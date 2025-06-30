@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Happy Birthday Mew! 💖</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS Styles --- */
+        :root {
+            --pink-light: #FFEFF7; /* Very light pink */
+            --pink: #FFCCE6;       /* Medium pink */
+            --pink-dark: #FF99CD;   /* Darker pink, for accents */
+            --white: #FFFFFF;
+            --text-color: #A84A73;  /* Deep rosy pink for text */
+            --pixel-black: #333333; /* For pixel outlines */
+            --pixel-green: #90EE90; /* For health/happiness bar */
+            --paw-pink: #FFDAE8; /* Lighter pink for paw cursor */
+            --button-shadow: 4px 4px 0px rgba(0, 0, 0, 0.3);
+            --button-shadow-hover: 6px 6px 0px rgba(0, 0, 0, 0.4);
+            --button-shadow-active: 1px 1px 0px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(to bottom, var(--pink-light), var(--white));
+            color: var(--text-color);
+            text-align: center;
+            overflow: hidden; /* Hide scrollbars until content is ready */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            justify-content: center;
+            position: relative; /* เพื่อให้องค์ประกอบ Absolute วางตำแหน่งได้ */
+        }
+
+        /* Loading Screen */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--pink-light);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            color: var(--text-color);
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.5em;
+        }
+
+        .paw-print {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-color: var(--pink-dark);
+            opacity: 0.7;
+            border-radius: 50%;
+            transform: rotate(var(--rotation, 0deg));
+            animation: fadeOutPaw 1s forwards;
+        }
+
+        .paw-print::before,
+        .paw-print::after {
+            content: '';
+            position: absolute;
+            background-color: var(--pink-dark);
+            border-radius: 50%;
+        }
+
+        .paw-print::before {
+            width: 15px;
+            height: 15px;
+            top: 5px;
+            left: 10px;
+        }
+
+        .paw-print::after {
+            width: 15px;
+            height: 15px;
+            top: 5px;
+            right: 10px;
+        }
+
+        @keyframes fadeOutPaw {
+            0% { opacity: 0.7; transform: translateY(0) rotate(var(--rotation, 0deg)); }
+            100% { opacity: 0; transform: translateY(-50px) rotate(var(--rotation, 0deg)); }
+        }
+
+        /* Main Content Styling */
+        h1 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 2.2em;
+            margin-top: 1em;
+            color: var(--pink-dark);
+            text-shadow: 3px 3px 0px var(--pink);
+            letter-spacing: 2px;
+            opacity: 0;
+            animation: fadeIn 1s forwards 2s;
+        }
+
+        .typewriter {
+            font-family: 'Press Start 2P', cursive;
+            display: inline-block;
+            overflow: hidden;
+            border-right: 2px solid var(--pink-dark);
+            white-space: nowrap;
+            font-size: 0.9em;
+            margin-bottom: 2em;
+            color: var(--text-color);
+            padding-right: 5px;
+            opacity: 0;
+            animation: fadeIn 1s forwards 2.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--pink-dark); }
+        }
+
+        .pixel-hearts {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+            opacity: 0;
+            animation: fadeIn 1s forwards 2s;
+        }
+
+        .pixel-heart {
+            width: 20px;
+            height: 20px;
+            background-color: var(--pink-dark);
+            clip-path: polygon(
+                0% 30%, 10% 0%, 30% 0%, 50% 30%, 70% 0%, 90% 0%, 100% 30%,
+                100% 60%, 50% 100%, 0% 60%
+            );
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); opacity: 0.8; }
+            to { transform: scale(1.1); opacity: 1; }
+        }
+
+        /* Pixel Decorations (new) */
+        .pixel-decor {
+            position: absolute;
+            width: 40px; /* Adjust size as needed */
+            height: 40px;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            opacity: 0.5; /* Reduced opacity for a background effect */
+            transform: rotate(var(--rotation, 0deg));
+            pointer-events: none; /* Make sure it's not clickable */
+            z-index: 5; /* Behind game container, but above background */
+        }
+
+        /* Game Container */
+        #game-container {
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            align-items: center;
+            opacity: 0;
+            animation: fadeIn 1s forwards 3s;
+            z-index: 10; /* Make sure game is on top of decorations */
+            position: relative; /* For z-index to work against pixel-decor */
+        }
+
+        #tamagotchi-screen {
+            width: 280px;
+            height: 280px;
+            border: 4px solid var(--pixel-black);
+            border-radius: 15px;
+            background-color: #f0f8ff; /* AliceBlue */
+            box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1.5em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            background-image: radial-gradient(circle at 10% 20%, rgba(255,249,244,1) 0%, rgba(255,237,237,1) 100%);
+        }
+
+        #pixel-cat-sprite {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 128px;
+            height: 128px;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.1));
+            z-index: 2;
+            transition: none; /* Removed transition to avoid unintended movement */
+        }
+
+        #bed-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 180px;
+            height: 180px;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            z-index: 1;
+            display: none; /* Hidden by default */
+        }
+
+        #status-bar {
+            width: 80%;
+            height: 18px;
+            background-color: #eee;
+            border: 2px solid var(--pixel-black);
+            margin-top: auto;
+            position: relative;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        #happiness-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--pixel-green);
+            transition: width 0.5s ease-out;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+        }
+
+        #game-message {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 0.9em;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        #game-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 1.5em;
+            opacity: 0;
+            animation: fadeIn 1s forwards 3.5s;
+        }
+
+        .game-button {
+            background-color: var(--pink-dark);
+            color: var(--white);
+            font-family: 'Press Start 2P', cursive;
+            padding: 10px 18px;
+            border: 3px solid var(--pixel-black);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: transform 0.1s ease-in-out, background-color 0.2s, box-shadow 0.2s;
+            box-shadow: var(--button-shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 90px;
+        }
+
+        .game-button img {
+            width: 28px;
+            height: 28px;
+            margin-right: 5px;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+
+        .game-button:hover {
+            background-color: var(--pink);
+            transform: translateY(-3px);
+            box-shadow: var(--button-shadow-hover);
+        }
+
+        .game-button:active {
+            transform: translateY(1px);
+            box-shadow: var(--button-shadow-active);
+        }
+
+        #unlock-message {
+            font-family: 'Press Start 2P', cursive;
+            color: var(--text-color);
+            margin-top: 1em;
+            font-size: 0.9em;
+            display: none; /* Hidden by default */
+        }
+
+        /* Scratch-off Gift */
+        #scratch-container {
+            position: relative;
+            margin: 2em auto;
+            width: 350px;
+            height: 220px;
+            background-color: var(--pink);
+            border: 5px solid var(--pink-dark);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(255, 153, 204, 0.6);
+            display: none; /* Hidden by default */
+            animation: bounceIn 1s ease-out;
+            /* Pixelated border effect */
+            border-image-source: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect x='0' y='0' width='40' height='40' fill='%23FFDAE8'/><path d='M20 5 L23 10 Q25 12 28 10 Q30 8 30 15 Q28 17 25 15 L20 20 L15 15 Q12 17 10 15 Q10 8 12 10 Q15 12 17 10 Z' fill='%23FF99CD'/></svg>");
+            border-image-slice: 10;
+            border-image-width: 20px;
+            border-image-repeat: round;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        #gift-message {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,240,245,0.98) 100%);
+            color: var(--text-color);
+            font-size: 1.3em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 0;
+            padding: 1.5em;
+            font-family: 'Fredoka', sans-serif;
+            line-height: 1.6;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+        }
+
+        #gift-message span {
+            display: block;
+            margin-bottom: 0.5em;
+            font-weight: 600;
+        }
+
+        #gift-message .emoji {
+            font-size: 1.5em;
+            margin-top: 0.5em;
+        }
+
+        canvas#scratch-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            /* Custom paw cursor for scratching */
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="22" r="12" fill="%23FFDAE8"/><circle cx="12" cy="14" r="5" fill="%23FFDAE8"/><circle cx="20" cy="10" r="5" fill="%23FFDAE8"/><circle cx="28" cy="14" r="5" fill="%23FFDAE8"/><circle cx="16" cy="24" r="3" fill="%23FF99CD"/><circle cx="24" cy="24" r="3" fill="%23FF99CD"/></svg>') 20 20, auto;
+        }
+
+        /* Confetti Canvas */
+        .confetti {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            pointer-events: none; /* Allows clicks to pass through */
+            z-index: 100; /* Above all other elements */
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-screen">
+        <p>Loading cute surprises...</p>
+    </div>
+
+    <audio id="meow-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-cat-meow-close-57.mp3" preload="auto"></audio>
+    <audio id="success-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-game-success-notification-2120.mp3" preload="auto"></audio>
+    <audio id="sparkle-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-cinematic-sparkle-1090.mp3" preload="auto"></audio>
+
+    <div class="pixel-hearts">
+        <div class="pixel-heart"></div>
+        <div class="pixel-heart"></div>
+        <div class="pixel-heart"></div>
+    </div>
+
+    <h1>Happy Birthday Mew!</h1>
+    <div class="typewriter"></div>
+
+    <div id="game-container">
+        <div id="tamagotchi-screen">
+            <img id="pixel-cat-sprite" class="pixel-cat-game" src="images/catmovetail1.png" alt="Pixel Cat">
+            <img id="bed-overlay" src="images/bed.png" alt="Cat Bed">
+            <div id="status-bar">
+                <div id="happiness-bar"></div>
+            </div>
+            <p id="game-message"></p>
+        </div>
+        <div id="game-buttons">
+            <button class="game-button" id="feed-button">
+                <img src="images/feedfood.png" alt="Feed Icon"> Feed
+            </button>
+            <button class="game-button" id="play-button">
+                <img src="images/toy.png" alt="Play Icon"> Play
+            </button>
+            <button class="game-button" id="sleep-button">
+                <img src="images/bed.png" alt="Bed Icon"> Sleep
+            </button>
+        </div>
+        <p id="unlock-message">Keep Mew happy to reveal your gift!</p>
+    </div>
+
+    <div id="scratch-container">
+        <div id="gift-message">
+            <span>May your day be filled with purr-fect joy,</span>
+            <span>pixel sparkles, and all things kawaii!</span>
+            <span class="emoji">🐾✨🎉</span>
+        </div>
+        <canvas id="scratch-canvas" width="350" height="220"></canvas>
+    </div>
+
+    <canvas class="confetti" id="confetti"></canvas>
+
+    <script>
+        // --- Audio Elements ---
+        const meowSound = document.getElementById('meow-sound');
+        const successSound = document.getElementById('success-sound');
+        const sparkleSound = document.getElementById('sparkle-sound');
+
+        // --- Loading Screen and Paw Prints ---
+        const loadingScreen = document.getElementById('loading-screen');
+        const typewriterDiv = document.querySelector('.typewriter');
+
+        function createPawPrint(x, y) {
+            const paw = document.createElement('div');
+            paw.className = 'paw-print';
+            paw.style.left = `${x}px`;
+            paw.style.top = `${y}px`;
+            paw.style.setProperty('--rotation', `${Math.random() * 360}deg`);
+            loadingScreen.appendChild(paw);
+            setTimeout(() => paw.remove(), 1000);
+        }
+
+        function animatePawPrints() {
+            let count = 0;
+            const maxPawPrints = 15; // Number of paw prints to show
+            const interval = setInterval(() => {
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                createPawPrint(x, y);
+                count++;
+                if (count >= maxPawPrints) {
+                    clearInterval(interval);
+                    setTimeout(showMainContent, 1000); // Wait a bit before showing main content
+                }
+            }, 150);
+        }
+
+        // --- Typewriter Effect ---
+        function typewriterEffect(text, callback) {
+            let i = 0;
+            typewriterDiv.style.animation = 'none'; // Reset animation
+            typewriterDiv.style.borderRight = '2px solid var(--pink-dark)'; // Show initial caret
+            typewriterDiv.innerHTML = ''; // Clear existing text
+            function type() {
+                if (i < text.length) {
+                    typewriterDiv.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, 80); // Typing speed
+                } else {
+                    typewriterDiv.style.animation = 'blink-caret 0.8s step-end infinite'; // Blink caret
+                    if (callback) callback();
+                }
+            }
+            type();
+        }
+
+        // --- Tamagotchi Game Logic ---
+        const pixelCatSprite = document.getElementById('pixel-cat-sprite');
+        const bedOverlay = document.getElementById('bed-overlay');
+        const happinessBar = document.getElementById('happiness-bar');
+        const feedButton = document.getElementById('feed-button');
+        const playButton = document.getElementById('play-button');
+        const sleepButton = document.getElementById('sleep-button');
+        const gameMessage = document.getElementById('game-message');
+        const gameContainer = document.getElementById('game-container');
+        const unlockMessage = document.getElementById('unlock-message');
+        const scratchContainer = document.getElementById('scratch-container');
+
+
+        let happiness = 0;
+        const maxHappiness = 100;
+        const actionsNeeded = 5; // Number of interactions to reach max happiness
+        let interactions = 0;
+        let isSleeping = false;
+
+        // --- Cat Sprite Images ---
+        const catSprites = {
+            idle: "images/catmovetail1.png",
+            happy: "images/catmovetail5.png" // Mew is purr-fectly happy! will show catmovetail5.png
+        };
+
+        // Updated mainAnimationFrames for 1-2-3-4-5-4-3-2-1 sequence
+        const mainAnimationFrames = [
+            "images/catmovetail1.png",
+            "images/catmovetail2.png",
+            "images/catmovetail3.png",
+            "images/catmovetail4.png",
+            "images/catmovetail5.png",
+            "images/catmovetail4.png",
+            "images/catmovetail3.png",
+            "images/catmovetail2.png"
+        ];
+        let currentAnimationFrameIndex = 0;
+        let animationDirection = 1; // 1 for forward, -1 for backward
+
+        // --- Blink Animation ---
+        const blinkAnimationFrames = [
+            "images/catbox1.png", // Eyes open
+            "images/catbox2.png", // Eyes half closed
+            "images/catbox3.png", // Eyes almost closed
+            "images/catbox4.png", // Eyes closed
+            "images/catbox3.png", // Eyes almost closed
+            "images/catbox2.png", // Eyes half closed
+            "images/catbox1.png"  // Eyes open
+        ];
+        let isBlinking = false;
+        let blinkTimeout;
+
+        function startBlinkAnimation() {
+            if (isSleeping || isBlinking) return; // Don't blink if sleeping or already blinking
+
+            isBlinking = true;
+            let blinkFrameIndex = 0;
+            const originalCatSprite = pixelCatSprite.src; // Save original sprite to restore later
+
+            function doBlink() {
+                if (blinkFrameIndex < blinkAnimationFrames.length) {
+                    pixelCatSprite.src = blinkAnimationFrames[blinkFrameIndex];
+                    blinkFrameIndex++;
+                    requestAnimationFrame(doBlink); // Continue animation next frame
+                } else {
+                    // Restore to current catmovetail frame, not just originalCatSprite
+                    pixelCatSprite.src = mainAnimationFrames[currentAnimationFrameIndex];
+                    isBlinking = false;
+                    scheduleNextBlink(); // Schedule next blink after a random delay
+                }
+            }
+            doBlink();
+        }
+
+        function scheduleNextBlink() {
+            if (blinkTimeout) clearTimeout(blinkTimeout); // Clear any existing blink timeout
+            const randomDelay = Math.random() * (5000 - 2000) + 2000; // Random delay between 2-5 seconds
+            blinkTimeout = setTimeout(startBlinkAnimation, randomDelay);
+        }
+
+        function animateCat() {
+            if (isSleeping || isBlinking) return; // Don't animate if sleeping or blinking
+
+            if (happiness < maxHappiness) {
+                // Update frame index based on direction
+                currentAnimationFrameIndex += animationDirection;
+
+                // Change direction if reached end or beginning of frames
+                if (currentAnimationFrameIndex >= mainAnimationFrames.length || currentAnimationFrameIndex < 0) {
+                    animationDirection *= -1; // Reverse direction
+                    currentAnimationFrameIndex += animationDirection * 2; // Adjust index to stay within bounds
+                }
+                pixelCatSprite.src = mainAnimationFrames[currentAnimationFrameIndex];
+            } else {
+                pixelCatSprite.src = catSprites.happy; // Stays happy sprite when max happiness
+            }
+        }
+
+        let catAnimationInterval;
+        function startCatAnimation() {
+            if (catAnimationInterval) clearInterval(catAnimationInterval); // Clear previous interval
+            catAnimationInterval = setInterval(() => {
+                animateCat();
+            }, 300); // Change frame every 300ms
+            scheduleNextBlink(); // Start scheduling blinks
+        }
+
+        function updateHappiness(amount) {
+            if (isSleeping) {
+                gameMessage.textContent = "Mew is sleeping peacefully... shhh!";
+                return;
+            }
+
+            happiness = Math.min(maxHappiness, happiness + amount); // Cap happiness at max
+            happinessBar.style.width = `${happiness}%`;
+            interactions++;
+
+            if (happiness >= maxHappiness) {
+                successSound.play();
+                gameMessage.textContent = "Mew is purr-fectly happy! Your gift is ready!";
+                // Disable buttons
+                feedButton.disabled = true;
+                playButton.disabled = true;
+                sleepButton.disabled = true;
+                pixelCatSprite.src = catSprites.happy; // Set to happy sprite
+                clearInterval(catAnimationInterval); // Stop normal cat animation
+                clearTimeout(blinkTimeout); // Stop blinking
+                gameContainer.style.display = 'none'; // Hide game
+                scratchContainer.style.display = 'block'; // Show scratch-off
+            } else {
+                gameMessage.textContent = `Keep Mew happy! ${actionsNeeded - interactions} interactions left.`;
+                meowSound.currentTime = 0; // Rewind sound
+                meowSound.play();
+            }
+        }
+
+        // --- Button Click Handlers ---
+        feedButton.addEventListener('click', () => {
+            updateHappiness(maxHappiness / actionsNeeded);
+        });
+
+        playButton.addEventListener('click', () => {
+            updateHappiness(maxHappiness / actionsNeeded);
+        });
+
+        sleepButton.addEventListener('click', () => {
+            if (!isSleeping) {
+                isSleeping = true;
+                bedOverlay.style.display = 'block';
+                pixelCatSprite.style.display = 'none'; // Hide cat sprite
+                gameMessage.textContent = "Mew is now sleeping... Zzz...";
+                clearInterval(catAnimationInterval); // Stop cat animation
+                clearTimeout(blinkTimeout); // Stop blinking
+                sleepButton.innerHTML = `<img src="images/bed.png" alt="Bed Icon"> Wake Up`;
+            } else {
+                isSleeping = false;
+                bedOverlay.style.display = 'none';
+                pixelCatSprite.style.display = 'block'; // Show cat sprite
+                pixelCatSprite.src = catSprites.idle; // Reset to idle
+                gameMessage.textContent = "Mew is awake and ready to play!";
+                startCatAnimation(); // Resume cat animation
+                sleepButton.innerHTML = `<img src="images/bed.png" alt="Bed Icon"> Sleep`;
+            }
+        });
+
+        // --- Initial Load Sequence ---
+        function showMainContent() {
+            loadingScreen.style.display = 'none';
+            document.body.style.overflow = 'auto'; // Allow scrolling if content is taller
+            typewriterEffect('From Focus with infinite cuteness 💖', () => {
+                gameContainer.style.display = 'flex';
+                unlockMessage.style.display = 'block';
+                meowSound.play();
+                startCatAnimation(); // Start cat animation loop
+                createPixelDecorations(); // New: Start creating pixel decorations
+            });
+        }
+
+        // --- Pixel Decorations (new) ---
+        const catboxDecorationFrames = [
+            "images/catbox1.png",
+            "images/catbox2.png",
+            "images/catbox3.png",
+            "images/catbox4.png"
+        ];
+        const numDecorations = 25; // Increased number of catbox decorations
+
+        function createPixelDecorations() {
+            for (let i = 0; i < numDecorations; i++) {
+                const decor = document.createElement('img');
+                decor.className = 'pixel-decor';
+                // Randomly pick a catbox frame
+                decor.src = catboxDecorationFrames[Math.floor(Math.random() * catboxDecorationFrames.length)];
+                
+                // Position randomly across the *entire* screen for better distribution
+                // Added padding to prevent elements from going off-screen edge
+                const padding = 50; // px
+                const xPos = Math.random() * (window.innerWidth - padding * 2) + padding;
+                const yPos = Math.random() * (window.innerHeight - padding * 2) + padding;
+                
+                decor.style.left = `${xPos}px`;
+                decor.style.top = `${yPos}px`;
+                decor.style.setProperty('--rotation', `${Math.random() * 360}deg`); // Random rotation
+                
+                // Make some smaller for variety
+                const size = Math.random() * 30 + 30; // Between 30px and 60px
+                decor.style.width = `${size}px`;
+                decor.style.height = `${size}px`;
+
+                document.body.appendChild(decor);
+            }
+        }
+
+
+        // --- Scratch-off Canvas ---
+        const canvas = document.getElementById('scratch-canvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        const scratchThreshold = 0.5; // Percentage of pixels to reveal to trigger confetti
+
+        // Initial fill of the scratch-off layer
+        const scratchColor = '#FFCCE6'; // Match a pink color
+        ctx.fillStyle = scratchColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        function getTransparentPixelCount() {
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imageData.data;
+            let transparentPixels = 0;
+            for (let i = 0; i < pixels.length; i += 4) {
+                if (pixels[i + 3] === 0) { // Check alpha channel
+                    transparentPixels++;
+                }
+            }
+            return transparentPixels;
+        }
+
+        // Mouse/Touch Events for Scratching
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            scratch(x, y);
+        });
+        canvas.addEventListener('mouseup', () => {
+            isDrawing = false;
+            const totalPixels = canvas.width * canvas.height;
+            const transparentPixels = getTransparentPixelCount();
+            if ((transparentPixels / totalPixels) > scratchThreshold) {
+                sparkleSound.play();
+                drawConfetti(); // Start confetti when enough is scratched
+                canvas.removeEventListener('mousemove', scratchOnMove); // Stop listening to mousemove
+                canvas.style.cursor = 'default'; // Change cursor back
+            }
+        });
+        canvas.addEventListener('mouseleave', () => isDrawing = false);
+
+        canvas.addEventListener('mousemove', scratchOnMove);
+
+        // Touch events for mobile
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Prevent scrolling
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            scratch(x, y);
+        });
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            isDrawing = false;
+            const totalPixels = canvas.width * canvas.height;
+            const transparentPixels = getTransparentPixelCount();
+            if ((transparentPixels / totalPixels) > scratchThreshold) {
+                sparkleSound.play();
+                drawConfetti();
+                canvas.removeEventListener('touchmove', scratchOnMove);
+                canvas.style.cursor = 'default';
+            }
+        });
+        canvas.addEventListener('touchcancel', () => isDrawing = false);
+        canvas.addEventListener('touchmove', scratchOnMove);
+
+        function scratchOnMove(e) {
+            if (!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            let x, y;
+            if (e.touches && e.touches.length > 0) { // For touch events
+                const touch = e.touches[0];
+                x = touch.clientX - rect.left;
+                y = touch.clientY - rect.top;
+            } else { // For mouse events
+                x = e.clientX - rect.left;
+                y = e.clientY - rect.top;
+            }
+            scratch(x, y);
+        }
+
+        function scratch(x, y) {
+            ctx.globalCompositeOperation = 'destination-out'; // Erase pixels
+            ctx.beginPath();
+            ctx.arc(x, y, 25, 0, 2 * Math.PI); // Draw a circle to erase
+            ctx.fill();
+        }
+
+        // --- Confetti ---
+        const confettiCanvas = document.getElementById('confetti');
+        const cctx = confettiCanvas.getContext('2d');
+        confettiCanvas.width = window.innerWidth;
+        confettiCanvas.height = window.innerHeight;
+        const confettiColors = ['#FFCCE6', '#FFEFF7', '#FFFFFF', '#FF99CD', '#FFE5B4', '#FFB6C1'];
+
+        // Create individual confetti pieces
+        const confettiPieces = Array.from({length: 300}, () => ({
+            x: Math.random() * confettiCanvas.width,
+            y: Math.random() * confettiCanvas.height,
+            r: Math.random() * 5 + 3, // radius/size
+            d: Math.random() * 8 + 4, // density (for movement variation)
+            color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+            tilt: Math.random() * 10 - 5, // tilt angle
+            tiltAngle: Math.random() * Math.PI, // current tilt rotation
+            velocity: { x: (Math.random() - 0.5) * 4, y: Math.random() * 2.5 + 1 }
+        }));
+
+        function drawConfetti() {
+            cctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height); // Clear canvas
+
+            confettiPieces.forEach(p => {
+                cctx.save();
+                cctx.translate(p.x, p.y);
+                cctx.rotate(p.tiltAngle);
+                cctx.fillStyle = p.color;
+
+                const size = p.r * 1.8; // Make squares slightly rectangular
+                cctx.fillRect(-size / 2, -size / 2, size, size * 0.8);
+
+                cctx.restore();
+
+                // Update position
+                p.y += p.velocity.y;
+                p.x += p.velocity.x;
+                p.tiltAngle += 0.08; // Rotate
+
+                // Reset confetti if it goes off screen
+                if (p.y > confettiCanvas.height) {
+                    p.y = -p.r; // Reset to top
+                    p.x = Math.random() * confettiCanvas.width; // Random new x
+                    p.velocity = { x: (Math.random() - 0.5) * 4, y: Math.random() * 2.5 + 1 }; // New random velocity
+                }
+            });
+            requestAnimationFrame(drawConfetti); // Loop animation
+        }
+
+        // Resize confetti canvas with window
+        window.addEventListener('resize', () => {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        });
+
+        // Initialize game message
+        gameMessage.textContent = `Keep Mew happy! ${actionsNeeded} interactions left.`;
+
+        // Start the loading animation when the page loads
+        animatePawPrints();
+    </script>
+</body>
+</html>
